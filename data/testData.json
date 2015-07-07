@@ -1,0 +1,84 @@
+[
+  {
+    "name": "节点1",
+    "son": [
+      {
+        "id": 11,
+        "name": "节点11",
+        "parentName": "节点1",
+        "son": [
+          {
+            "id": 111,
+            "name": "节点111",
+            "parentName": "节点11"
+          },
+          {
+            "id": 112,
+            "name": "节点112",
+            "parentName": "节点11"
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "name": "节点12",
+        "parentName": "节点1"
+      }
+    ]
+  },
+  {
+    "name": "节点2",
+    "son": [
+      {
+        "id": 21,
+        "name": "节点21",
+        "parentName": "节点2"
+      }
+    ]
+  },
+  {
+    "name": "节点3",
+    "son": [
+      {
+        "id": 31,
+        "name": "节点31",
+        "parentName": "节点3"
+      }
+    ]
+  },
+  {
+    "name": "节点4",
+    "son": [
+      {
+        "id": 41,
+        "name": "节点41",
+        "parentName": "节点4"
+      }
+    ]
+  },
+  {
+    "name": "节点5",
+    "son": [
+      {
+        "id": 51,
+        "name": "节点51",
+        "parentName": "节点5"
+      },
+      {
+        "id": 52,
+        "name": "节点52",
+        "parentName": "节点5"
+      },
+      {
+        "id": 53,
+        "name": "节点53",
+        "parentName": "节点5"
+      },
+      {
+        "id": 54,
+        "name": "节点54",
+        "parentName": "节点5"
+      }
+    ]
+  }
+]
