@@ -25,18 +25,18 @@ var select3 = {
 			var setting = {};
 			_this.domMark			= 'tree-type-search';	//标识，用于生成下拉框
 			_this.treeData			= [];					//树源数据
-			_this.data				= [],					//选中的节点
+			_this.data				= [];					//选中的节点
 			_this.animateTime		= 300;					//滑动动画耗时
 			_this.indent     		= 26;					//树缩进像素
 			_this.isSelectParent 	= false; 				//是否可选中父级节点
-			_this.searchMinWidth 	= 20,					//搜索输入框最小宽度
-			_this.width				= '100%',				//控件展示宽度
+			_this.searchMinWidth 	= 20;					//搜索输入框最小宽度
+			_this.width				= '100%';				//控件展示宽度
 			_this.height			= '32px';				//控件展示高度
 			_this.matchLimit 		= 20;					//搜索时单次进行匹配的量，该值越大匹配越快，但是会影响性能，
 			_this.matchTime  		= 20;					//搜索时单次进行匹配的延时，该值越小匹配越快，但是会影响性能
 			_this.isDevelopMode     = false;				//是否为开发模式，为true时将打印事件日志
 			_this.placeholder		= 'Please select a';	//选中项为空的占位符
-			
+
 			if(typeof(s1) == 'string' && !s2){
 				throw new Error('select3参数错误，请参考使用文档');
 				return false;
@@ -69,7 +69,7 @@ var select3 = {
 				setting = s1;
 			}
 			$.extend(_this, setting);
-						
+
 			var _dom = $(this);
 			//验证是否已经渲染
 			if(_dom.parent().find('.' + _this.domMark).length == 0){
@@ -223,7 +223,8 @@ var select3 = {
 			}else{
 				_title = _choicesAction;	
 				_icon = _title.parent().find('> .ts-icon:visible');
-			}					
+			}
+			// 已选中
 			if(_title.hasClass('is-checked')){
 				return false;
 			}
@@ -270,12 +271,12 @@ var select3 = {
 						  + _title.text()
 						  + '</span>'
 						  + '<span class="del-action icon-delete-s1"></span>'
-						  + '</li>'
+						  + '</li>';
 				_searchField.before(_showHtml);
 				
 				//将已选中的子集增加不可选状态
 				_title.addClass('is-checked');
-				
+
 				//重置搜索输入框				
 				_searchField.width(_this.searchMinWidth);
 				var _w  = _choicesList.width()
@@ -370,7 +371,7 @@ var select3 = {
 			
 			var _remindText = _remindArea.find('.remind-text');
 			_remindText.text('');
-			_remindText.hide()	
+			_remindText.hide();
 			//验证搜索条件是否重复			
 			if(_searchText == _searchAction.attr('record')){				
 				return false;
@@ -440,7 +441,7 @@ var select3 = {
 						_remindText.show();
 					}
 				}
-			};	
+			}
 			var _pId,
 				_pDOM;
 			//展示当前匹配搜索条件的父级
@@ -566,6 +567,6 @@ var select3 = {
 			console.log(msg);
 		}
 	}
-}
+};
 
 select3.init();
