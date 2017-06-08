@@ -10,7 +10,6 @@
 /*选中展示、搜索区域*/
 .tree-type-search .choices-area{
 	width:100%;
-	padding:0px;
 	border:0px;
 	padding:0px 5px;
 	position:relative;
@@ -76,19 +75,23 @@
 	padding:0px;
 	margin-right:0px;
 }
-.tree-type-search .choices-area .choices-list li.search-field .search-input{
+.tree-type-search .search_box{
+	width: 100%;
+	height: 30px;
 	display:none;
+}
+.tree-type-search  .search-input{
 	width:100%;
 	height:100%;
 	padding:0px 5px;
-	border:0px;
+	border:1px solid #66afe9;
 }
-.tree-type-search.fc-doing .choices-area .choices-list li.search-field .search-input{
+/* .tree-type-search.fc-doing .choices-area .choices-list li.search-field .search-input{
 	display:block;
 }
 .tree-type-search.fc-doing .choices-area .choices-list li.search-field .search-input:focus{
 	border:0px;
-}
+} */
 /*数据为空提示*/
 .tree-type-search .remind-area{
 	display:none;
