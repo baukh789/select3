@@ -4,83 +4,8 @@
 	@baukh20150424:性能全面优化，提升前端渲染及事件处理速度
 */
 'use strict';
-var select3 = {
-	/*
-		@初始化方法
-	*/
-	init: function(){
-		var _this = this;
-		_this.addInitDataFunction(); //增加初始化数据方法至jquery
-	}
-	/*
-		@增加初始化数据方法至jquery	
-	*/
-	,addInitDataFunction: function(){
-		var _this = this;
-		
-		//初始化插件
-		//$.s1:为对像时,s2为空
-		//$.s2:类型可以为string,Object,number,array
-		$.fn.select3 = function(s1, s2){
-			var setting = {};
-			_this.domMark			= 'tree-type-search';	//标识，用于生成下拉框
-			_this.treeData			= [];					//树源数据
-			_this.data				= [];					//选中的节点
-			_this.animateTime		= 300;					//滑动动画耗时
-			_this.indent     		= 26;					//树缩进像素
-			_this.isSelectParent 	= false; 				//是否可选中父级节点
-			_this.isMultiple        = true;                //是否多选
-			_this.searchMinWidth 	= 20;					//搜索输入框最小宽度
-			_this.width				= '100%';				//控件展示宽度
-			_this.height			= '32px';				//控件展示高度
-			_this.matchLimit 		= 20;					//搜索时单次进行匹配的量，该值越大匹配越快，但是会影响性能，
-			_this.matchTime  		= 20;					//搜索时单次进行匹配的延时，该值越小匹配越快，但是会影响性能
-			_this.isDevelopMode     = false;				//是否为开发模式，为true时将打印事件日志
-			_this.placeholder		= 'Please select a';	//选中项为空的占位符
-
-			if(typeof(s1) == 'string' && !s2){
-				throw new Error('select3参数错误，请参考使用文档');
-				return false;
-			}
-			
-			//数据格式:字符串
-			if(s2 && typeof(s2) == 'string'){
-				_this.outLog('输入数据格式为字符串');
-				s2 = s2.split(',');			
-			//数据格式：数字
-			}else if(s2 && typeof(s2) == 'number'){
-				_this.outLog('输入数据格式为数字');
-				s2 = [s2];			
-			//数据格式：对象
-			}else if(s2 && $.isPlainObject(s2)){
-				_this.outLog('输入数据格式为对象');
-				s2 = [s2];			
-			//数据格式：数组
-			}else if(s2 && $.isArray(s2)){
-				_this.outLog('输入数据格式为数组');
-				s2 = s2;
-			}
-			//当前数据类型为val:单一的
-			if(typeof(s1) == 'string' && (s1 == 'val' || s1 == 'data')){
-				_this.data = s2;
-			}
-			
-			//当前为渲染配置项
-			if(typeof(s1) == 'object'){
-				setting = s1;
-			}
-			$.extend(_this, setting);
-
-			var _dom = $(this);
-			//验证是否已经渲染
-			if(_dom.parent().find('.' + _this.domMark).length == 0){
-				_this.createDOM(_dom);//创建select3 DOM
-				_this.bindChoiceEvent(); //绑定选择框事件
-			}
-			//数据回显
-			_this.checkNode(_dom, _this.data);
-		};
-	}
+select3.prototype = {
+	constructor: select3
 	/*
 		//选中树节点
 		//$.选中的节点数据
@@ -133,7 +58,6 @@ var select3 = {
 	*/
 	,bindChoiceEvent: function(){
 		var _this = this;
-		
 		/***
 			鼠标事件
 		*/
@@ -260,6 +184,7 @@ var select3 = {
 
 
 			//是否多选
+			console.log(_this);
 			if(!_this.isMultiple && _memory.val().length>0){
 				return; 
 			}
@@ -592,5 +517,68 @@ var select3 = {
 		}
 	}
 };
+function select3(node, s1, s2){
+	var setting = {};
+	this.domMark			= 'tree-type-search';	//标识，用于生成下拉框
+	this.treeData			= [];					//树源数据
+	this.data				= [];					//选中的节点
+	this.animateTime		= 300;					//滑动动画耗时
+	this.indent     		= 26;					//树缩进像素
+	this.isSelectParent 	= false; 				//是否可选中父级节点
+	this.isMultiple        	= true;                //是否多选
+	this.searchMinWidth 	= 20;					//搜索输入框最小宽度
+	this.width				= '100%';				//控件展示宽度
+	this.height				= '32px';				//控件展示高度
+	this.matchLimit 		= 20;					//搜索时单次进行匹配的量，该值越大匹配越快，但是会影响性能，
+	this.matchTime  		= 20;					//搜索时单次进行匹配的延时，该值越小匹配越快，但是会影响性能
+	this.isDevelopMode     	= false;				//是否为开发模式，为true时将打印事件日志
+	this.placeholder		= 'Please select a';	//选中项为空的占位符
 
-select3.init();
+	if(typeof(s1) == 'string' && !s2){
+		throw new Error('select3参数错误，请参考使用文档');
+		return false;
+	}
+
+	//数据格式:字符串
+	if(s2 && typeof(s2) == 'string'){
+		this.outLog('输入数据格式为字符串');
+		s2 = s2.split(',');
+		//数据格式：数字
+	}else if(s2 && typeof(s2) == 'number'){
+		this.outLog('输入数据格式为数字');
+		s2 = [s2];
+		//数据格式：对象
+	}else if(s2 && $.isPlainObject(s2)){
+		this.outLog('输入数据格式为对象');
+		s2 = [s2];
+		//数据格式：数组
+	}else if(s2 && $.isArray(s2)){
+		this.outLog('输入数据格式为数组');
+		s2 = s2;
+	}
+	//当前数据类型为val:单一的
+	if(typeof(s1) == 'string' && (s1 == 'val' || s1 == 'data')){
+		this.data = s2;
+	}
+
+	//当前为渲染配置项
+	if(typeof(s1) == 'object'){
+		setting = s1;
+	}
+	$.extend(this, setting);
+	//验证是否已经渲染
+	if(node.parent().find('.' + this.domMark).length == 0){
+		this.createDOM(node);//创建select3 DOM
+		this.bindChoiceEvent(this); //绑定选择框事件
+	}
+	//数据回显
+	this.checkNode(node, this.data);
+}
+(function(){
+	//初始化插件
+	//$.s1:为对像时,s2为空
+	//$.s2:类型可以为string,Object,number,array
+	$.fn.select3 = function(s1, s2){
+		var sel = new select3(this, s1, s2);
+	};
+})();
