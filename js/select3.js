@@ -29,6 +29,7 @@ var select3 = {
 			_this.animateTime		= 300;					//滑动动画耗时
 			_this.indent     		= 26;					//树缩进像素
 			_this.isSelectParent 	= false; 				//是否可选中父级节点
+			_this.isMultiple        = true;                //是否多选
 			_this.searchMinWidth 	= 20;					//搜索输入框最小宽度
 			_this.width				= '100%';				//控件展示宽度
 			_this.height			= '32px';				//控件展示高度
@@ -143,6 +144,7 @@ var select3 = {
 			_choicesArea,		//选中列表与搜索区域
 			_choicesList,		//选中列表与搜索区域所在的ul
 			_choiceField,   	//选中列表
+			_searchBox,		    //输入区域
 			_searchField,		//搜索区域
 			_remindArea,    	//提示区域
 			_iconLoading,		//loading图标区域
@@ -160,16 +162,18 @@ var select3 = {
 			_this.outLog('select3:打开下拉列表事件');
 			_thisDOM = $(this).parents('.'+ _this.domMark).eq(0);
 			_choicesArea = _thisDOM.find('.choices-area');
+			_searchBox = _thisDOM.find('.search_box');
 			_choicesList 	= _thisDOM.find('.choices-list');
 			_treeArea = _thisDOM.find('.tree-area');
-			_searchField 	= _choicesList.find('.search-field');
+			_searchField 	= _searchBox.find('.search-field');
 						
 			//打开
 			if(!_thisDOM.hasClass('fc-doing')){
-				var _w  = _choicesList.width()
+				/*var _w  = _choicesList.width()
 						- _searchField.get(0).offsetLeft
 						- 2;					
-				_searchField.width(_w);
+				_searchField.width(_w);*/
+				_searchBox.css({display:'block'});
 				_thisDOM.addClass('fc-doing');
 				_treeArea.fadeIn(_this.animateTime)
 				_searchField.find('input').focus();
@@ -188,6 +192,10 @@ var select3 = {
 			var _visibleDOM = _treeArea.parents('.'+ _this.domMark);
 			_choicesList 	= _visibleDOM.find('.choices-list');
 			_searchField 	= _visibleDOM.find('.search-field');
+			_searchBox 	= _visibleDOM.find('.search_box');
+			_searchBox.css({
+				display:'none'
+			});
 			
 			if(_visibleDOM.length == 0){
 				return;
@@ -237,6 +245,7 @@ var select3 = {
 			_choicesList 	= _thisDOM.find('.choices-list');
 			_searchField 	= _choicesList.find('.search-field');				
 			
+
 			//切换小图标样式
 			//展示或隐藏子集列表
 			if(_icon && _icon.hasClass('icon-right-s1') || _action_ == 'open'){
@@ -248,13 +257,21 @@ var select3 = {
 				_icon.removeClass('icon-down-s1');
 				_list.slideUp(_this.animateTime);
 			}
+
+
+			//是否多选
+			if(!_this.isMultiple && _memory.val().length>0){
+				return; 
+			}
+
 			//当前无子节点 或 用户配置父级节点可选
 			if(_list.length == 0 || _this.isSelectParent){
 				//存储ID至原生节点
 				_nodeId = _title.attr('node-id');
 				var _tmpVal = _memory.val() 
 							+ ($.trim(_memory.val()) == '' ? '' : ',')
-							+ _nodeId;			
+							+ _nodeId;		
+
 				_memory.val(_tmpVal);
 				
 				//存储对象至原生节点
@@ -263,6 +280,7 @@ var select3 = {
 					id	: _nodeId,
 					name:_title.attr('title')
 				});
+
 				_memory.data('choiceData',_tmpData);
 				
 				//存储name至展示区域
@@ -278,13 +296,18 @@ var select3 = {
 				_title.addClass('is-checked');
 
 				//重置搜索输入框				
-				_searchField.width(_this.searchMinWidth);
+				/*_searchField.width(_this.searchMinWidth);
 				var _w  = _choicesList.width()
 						- _searchField.get(0).offsetLeft
 						- 2;
-				_searchField.width(_w);
+				_searchField.width(_w);*/
+
+				//是否多选
+				if(!_this.isMultiple){
+					$('body').trigger('click');
+				}
 			}
-			
+
 		});
 		
 		//4、取消选中事件:鼠标关闭事件触发
@@ -470,10 +493,11 @@ var select3 = {
 					  + '<div class="choices-area">'
 					  + '<i class="icon-loading icon-refresh-s1"></i>'
 					  + '<ul class="choices-list">'
-					  + '<li class="search-field"><input type="text" class="search-input" record="" placeholder="'+_this.placeholder+'"/></li>'
+					  + '<li class="search-field"></li>'
 					  + '</ul>'
 					  + '</div>'
 					  + '<div class="remind-area"><div class="remind-text"></div></div>'
+					  + '<div class="search_box"><input type="text" class="search-input" record="" placeholder="'+_this.placeholder+'"/></div>'
 					  + '<div class="tree-area">'
 					  + '</div>'
 					  + '</div>';
