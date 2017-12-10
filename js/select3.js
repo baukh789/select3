@@ -78,8 +78,8 @@ select3.prototype = {
 			_nodeId,			//当前事件所对应的ID值	
 			_treeArea;			//搜索结果所在区域
 		//1、打开下拉列表事件
-		$('.'+ _this.domMark).off('click', '.choices-list, .search-input');
-		$('.'+ _this.domMark).on('click', '.choices-list, .search-input', function(e){
+		_this.node.parent().find('.'+ _this.domMark).off('click', '.choices-list, .search-input');
+		_this.node.parent().find('.'+ _this.domMark).on('click', '.choices-list, .search-input', function(e){
 			if(e.target != this){
 				return false;
 			}	
@@ -111,7 +111,7 @@ select3.prototype = {
 			if(!$(e.target).hasClass(_this.domMark) && $(e.target).parents('.' + _this.domMark).length != 0){
 				return;
 			}
-			_thisDOM = $('.'+ _this.domMark);
+			_thisDOM = _this.node.parent().find('.'+ _this.domMark);
 			_treeArea = _thisDOM.find('.tree-area:visible');
 			var _visibleDOM = _treeArea.parents('.'+ _this.domMark);
 			_choicesList 	= _visibleDOM.find('.choices-list');
@@ -146,8 +146,8 @@ select3.prototype = {
 		var _choicesAction,	//选中事件源
 			_title,			//标题选中事件源
 			_icon;			//图标选中事件源
-		$('.'+ _this.domMark).off('click', '.choices-action');
-		$('.'+ _this.domMark).on('click', '.choices-action', function(e, _action_){
+        _this.node.parent().find('.'+ _this.domMark).off('click', '.choices-action');
+        _this.node.parent().find('.'+ _this.domMark).on('click', '.choices-action', function(e, _action_){
 			_choicesAction = $(this);
 			if(_choicesAction.hasClass('ts-icon')){
 				_icon = _choicesAction;
@@ -157,7 +157,7 @@ select3.prototype = {
 				_icon = _title.parent().find('> .ts-icon:visible');
 			}
 			// 已选中
-			if(_title.hasClass('is-checked')){
+			if(_this.isMultiple && !_choicesAction.hasClass('ts-icon') && _title.hasClass('is-checked')){
 				return false;
 			}
 			_this.outLog('select3:选中事件');
@@ -176,17 +176,56 @@ select3.prototype = {
 				_icon.removeClass('icon-right-s1');
 				_icon.addClass('icon-down-s1');
 				_list.slideDown(_this.animateTime);
+
 			}else{
 				_icon.addClass('icon-right-s1');
 				_icon.removeClass('icon-down-s1');
 				_list.slideUp(_this.animateTime);
 			}
 
+            if(_choicesAction.hasClass('ts-icon') || _action_ == 'open'){
+                return false;
+            }
 
 			//是否多选
-			console.log(_this);
 			if(!_this.isMultiple && _memory.val().length>0){
-				return; 
+
+                //存储ID至原生节点
+                _nodeId = _title.attr('node-id');
+                var _tmpVal = _nodeId;
+
+                _memory.val(_tmpVal);
+
+                //存储对象至原生节点
+                var _tmpData = _memory.data('choiceData') || [];
+                _tmpData.push({
+                    id	: _nodeId,
+                    name:_title.attr('title')
+                });
+
+                _memory.data('choiceData',_tmpData);
+
+                _thisDOM.find(".choices-list").find('li.choice-field').remove();
+
+                //存储name至展示区域
+                _showHtml = '<li class="choice-field" node-id="'+ _title.attr('node-id') +'">'
+                    + '<span class="show-text" title="'+ _title.text() +'">'
+                    + _title.text()
+                    + '</span>'
+                    + '<span class="del-action icon-delete-s1"></span>'
+                    + '</li>';
+                _searchField.before(_showHtml);
+
+                //将已选中的子集增加不可选状态
+				$(".choices-action").removeClass('is-checked')
+                _title.addClass('is-checked');
+
+                _this.node.trigger('change');
+
+
+                $('body').trigger('click');
+
+				return;
 			}
 
 			//当前无子节点 或 用户配置父级节点可选
@@ -227,7 +266,10 @@ select3.prototype = {
 						- 2;
 				_searchField.width(_w);*/
 
-				//是否多选
+				_this.node.trigger('change');
+
+
+                //是否多选
 				if(!_this.isMultiple){
 					$('body').trigger('click');
 				}
@@ -236,8 +278,8 @@ select3.prototype = {
 		});
 		
 		//4、取消选中事件:鼠标关闭事件触发
-		$('.'+ _this.domMark).off('click', '.del-action');
-		$('.'+ _this.domMark).on('click', '.del-action', function(){
+        _this.node.parent().find('.'+ _this.domMark).off('click', '.del-action');
+        _this.node.parent().find('.'+ _this.domMark).on('click', '.del-action', function(){
 			_delAction = $(this);
 			_delForLi = _delAction.parent();
 			_nodeId = _delForLi.attr('node-id');		
@@ -273,7 +315,11 @@ select3.prototype = {
 					- _searchField.get(0).offsetLeft
 					- 2;
 			_searchField.width(_w);
-		});
+
+            _this.node.trigger('change');
+
+
+        });
 		
 		/***
 			键盘事件
@@ -287,8 +333,8 @@ select3.prototype = {
 			_delActionList; //删除事件源列表
 		
 		//5、取消选中事件:键盘回退事件触发
-		$('.'+ _this.domMark).off('keydown', '.search-input');
-		$('.'+ _this.domMark).on('keydown', '.search-input', function(e){	
+		_this.node.parent().find('.'+ _this.domMark).off('keydown', '.search-input');
+		_this.node.parent().find('.'+ _this.domMark).on('keydown', '.search-input', function(e){
 			_searchAction 	= $(this);
 			_searchText 	= $.trim(_searchAction.val());
 			//键盘回退键导向取消选中功能
@@ -306,8 +352,8 @@ select3.prototype = {
 		
 		//6、搜索事件
 		var STO_search;
-		$('.'+ _this.domMark).off('keyup', '.search-input');
-		$('.'+ _this.domMark).on('keyup', '.search-input', function(e){
+		_this.node.parent().find('.'+ _this.domMark).off('keyup', '.search-input');
+		_this.node.parent().find('.'+ _this.domMark).on('keyup', '.search-input', function(e){
 			_searchAction 	= $(this);
 			_thisDOM 		= _searchAction.parents('.'+ _this.domMark).eq(0);
 			_choicesArea 	= _thisDOM.find('.choices-area');
@@ -481,7 +527,7 @@ select3.prototype = {
 					 + (layer != 0 ? ' style="display:none;"': '')
 					 + '>';
 			$.each(treeData, function(i, v){
-				if(v.son && v.son.length > 0){
+				if(v[_this.sonKey] && v[_this.sonKey].length > 0){
 					isHaveSon = true;
 				}else{
 					isHaveSon = false;
@@ -499,7 +545,7 @@ select3.prototype = {
 						 +'</span>';
 				if(isHaveSon){
 					layer++;	
-					spanning(v.son, (v.id || v.name));
+					spanning(v[_this.sonKey], (v.id || v.name));
 					layer--;
 				}
 				treeHtml += '</li>';  
@@ -532,9 +578,13 @@ function select3(node, s1, s2){
 	this.matchLimit 		= 20;					//搜索时单次进行匹配的量，该值越大匹配越快，但是会影响性能，
 	this.matchTime  		= 20;					//搜索时单次进行匹配的延时，该值越小匹配越快，但是会影响性能
 	this.isDevelopMode     	= false;				//是否为开发模式，为true时将打印事件日志
+	this.sonKey				= 'child';
 	this.placeholder		= 'Please select a';	//选中项为空的占位符
+	this.node				= '';
 
-	if(typeof(s1) == 'string' && !s2){
+    this.node = node;
+
+    if(typeof(s1) == 'string' && !s2){
 		throw new Error('select3参数错误，请参考使用文档');
 		return false;
 	}
@@ -570,7 +620,16 @@ function select3(node, s1, s2){
 	if(node.parent().find('.' + this.domMark).length == 0){
 		this.createDOM(node);//创建select3 DOM
 		this.bindChoiceEvent(this); //绑定选择框事件
+	}else{
+		//重新渲染，数据清空
+		node.val('');
+		node.trigger('change');
+        node.parent().find('.' + this.domMark).remove();
+        node.show();
+        this.createDOM(node);//创建select3 DOM
+        this.bindChoiceEvent(this); //绑定选择框事件
 	}
+
 	//数据回显
 	this.checkNode(node, this.data);
 }
